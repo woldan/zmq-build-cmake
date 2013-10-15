@@ -6,9 +6,10 @@ project(czmq)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 include(header_configuration)
 
-set(CZMQ_REPOSITORY "${CMAKE_CURRENT_SOURCE_DIR}/repo"   CACHE PATH   "Path where the czmq sources are to be downloaded")
-set(CZMQ_URL        "https://github.com/zeromq/czmq.git" CACHE STRING "The URL the czmq sources are to be downloaded from")
-set(CZMQ_TARGET     "czmq"                               CACHE STRING "The target name to use for building the library")
+set(CZMQ_REPOSITORY          "${CMAKE_CURRENT_SOURCE_DIR}/repo"   CACHE PATH   "Path where the czmq sources are to be downloaded")
+set(CZMQ_URL                 "https://github.com/zeromq/czmq.git" CACHE STRING "The URL the czmq sources are to be downloaded from")
+set(CZMQ_TARGET              "czmq"                               CACHE STRING "The target name to use for building the library")
+set(CZMQ_SELFTEST_TARGET     "czmqtests"                          CACHE STRING "The target name to use for building the self tesu")
 
 # .. ensure we have the libzmq sources ..
 if (NOT IS_DIRECTORY ${CZMQ_REPOSITORY})
@@ -27,6 +28,11 @@ file(
   ${CZMQ_REPOSITORY}/src/*.c
   ${CZMQ_REPOSITORY}/src/*.h
 )
+file(
+  GLOB CZMQ_SELFTEST_SOURCES
+  ${CZMQ_REPOSITORY}/src/czmq_selftest.c
+)
+list(REMOVE_ITEM CZMQ_SOURCES ${CZMQ_SELFTEST_SOURCES})
 
 include_directories(${LIBZMQ_INCLUDE_DIRS})
 
@@ -43,6 +49,13 @@ add_library(
   ${CZMQ_SOURCES}
 )
 target_link_libraries(${CZMQ_TARGET} ${LIBZMQ_LIBRARIES})
+
+# .. declare tests to be built ..
+add_executable(
+  ${CZMQ_SELFTEST_TARGET}
+  ${CZMQ_SELFTEST_SOURCES}
+)
+target_link_libraries(${CZMQ_SELFTEST_TARGET} ${LIBZMQ_LIBRARIES} ${CZMQ_TARGET})
 
 install(
   TARGETS ${CZMQ_TARGET}
