@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(czmq)
+project(czmq CXX)
 
 # .. define some variables ..
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
@@ -18,24 +18,34 @@ elseif (NOT IS_DIRECTORY ${CZMQ_REPOSITORY})
   execute_process(COMMAND git pull --git-dir ${CZMQ_REPOSITORY} origin master)
 endif (NOT IS_DIRECTORY ${CZMQ_REPOSITORY})
 
-# .. build the library ..
+# .. collect source files ..
 file(
   GLOB_RECURSE CZMQ_PUBLIC_HEADERS
   ${CZMQ_REPOSITORY}/include/*.h
 )
 file(
-  GLOB_RECURSE CZMQ_SOURCES
-  ${CZMQ_REPOSITORY}/src/*.c
+  GLOB_RECURSE CZMQ_SOURCES_HEADERS
   ${CZMQ_REPOSITORY}/src/*.h
 )
+file(
+  GLOB_RECURSE CZMQ_SOURCES_C_FILES
+  ${CZMQ_REPOSITORY}/src/*.c
+)
+if (MSVC)
+  # .. preven MS cl to enforce pre-C99 parsing by forcing to C++ ..
+  set_source_files_properties(
+    ${CZMQ_SOURCES_C_FILES}
+    PROPERTIES
+    LANGUAGE CXX
+  )
+endif (MSVC)
 file(
   GLOB CZMQ_SELFTEST_SOURCES
   ${CZMQ_REPOSITORY}/src/czmq_selftest.c
 )
-list(REMOVE_ITEM CZMQ_SOURCES ${CZMQ_SELFTEST_SOURCES})
+list(REMOVE_ITEM CZMQ_SOURCES_C_FILES ${CZMQ_SELFTEST_SOURCES})
 
-include_directories(${LIBZMQ_INCLUDE_DIRS})
-
+# .. build the library ..
 configure_platform_header(
   ${CMAKE_CURRENT_LIST_DIR}/platform.h.in
   ${CZMQ_REPOSITORY}/src/platform.h
@@ -46,7 +56,13 @@ add_library(
   ${CZMQ_TARGET}
   SHARED
   ${CZMQ_PUBLIC_HEADERS}
-  ${CZMQ_SOURCES}
+  ${CZMQ_SOURCES_HEADERS}
+  ${CZMQ_SOURCES_C_FILES}
+)
+target_include_directories(
+  ${CZMQ_TARGET}
+  PUBLIC ${LIBZMQ_INCLUDE_DIRS}
+  INTERFACE ${LIBZMQ_INCLUDE_DIRS}
 )
 target_link_libraries(${CZMQ_TARGET} ${LIBZMQ_LIBRARIES})
 

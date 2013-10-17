@@ -12,6 +12,12 @@ function(set_configuration_variables)
     set(CZMQ_HAVE_SOLARIS TRUE PARENT_SCOPE)
   endif ()
 
+  # .. set platform dependent type definitions ..
+  if (WIN32)
+    add_definitions(-D__WINDOWS__)
+    set(mode_t "int")
+  endif (WIN32)
+
   # .. set "found header X" variables ..
   find_file(HAVE_ARPA_INET_H   NAMES "arpa/inet.h")
   find_file(HAVE_DLFCN_H       NAMES "dlfcn.h")

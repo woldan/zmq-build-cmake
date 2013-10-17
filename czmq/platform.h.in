@@ -191,26 +191,3 @@
    <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
    #define below would cause a syntax error. */
 #cmakedefine _UINT32_T
-
-/* Define to empty if `const' does not conform to ANSI C. */
-#cmakedefine const
-
-/* Define to `__inline__' or `__inline' if that's what the C compiler
-   calls it, or to nothing if 'inline' is not supported under any name.  */
-#ifndef __cplusplus
-#cmakedefine inline
-#endif
-
-/* Define to `unsigned int' if <sys/types.h> does not define. */
-#cmakedefine size_t
-
-/* Define to `int' if <sys/types.h> does not define. */
-#cmakedefine ssize_t
-
-/* Define to the type of an unsigned integer type of width exactly 32 bits if
-   such a type exists and the standard includes do not define it. */
-#cmakedefine uint32_t
-
-/* Define to empty if the keyword `volatile' does not work. Warning: valid
-   code using `volatile' can become incorrect without. Disable with care. */
-#cmakedefine volatile
