@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
+include(GenerateExportHeader)
 
 project(majordomo)
 
@@ -14,29 +15,42 @@ elseif (NOT IS_DIRECTORY ${MAJORDOMO_REPOSITORY})
   execute_process(COMMAND git pull --git-dir ${MAJORDOMO_REPOSITORY} origin master)
 endif (NOT IS_DIRECTORY ${MAJORDOMO_REPOSITORY})
 
+add_compiler_export_flags()
+
 # .. build the library ..
 file(
-  GLOB_RECURSE CMAJORDOMOPUBLIC_HEADERS
+  GLOB_RECURSE MAJORDOMO_PUBLIC_HEADERS
   ${MAJORDOMO_REPOSITORY}/libmdp/include/*.h
 )
 file(
-  GLOB_RECURSE MAJORDOMO_SOURCES
-  ${MAJORDOMO_REPOSITORY}/libmdp/src/mdp_*.c
+  GLOB_RECURSE MAJORDOMO_SOURCES_HEADERS
   ${MAJORDOMO_REPOSITORY}/libmdp/src/mdp_*.h
 )
-
-include_directories(
-  ${LIBZMQ_INCLUDE_DIRS}
-  ${CZMQ_INCLUDE_DIRS}
-  ${MAJORDOMO_REPOSITORY}/libmdp/include
+file(
+  GLOB_RECURSE MAJORDOMO_SOURCES_C_FILES
+  ${MAJORDOMO_REPOSITORY}/libmdp/src/mdp_*.c
 )
+if (MSVC)
+  # .. prevent MS cl to enforce pre-C99 parsing by forcing to C++ ..
+  set_source_files_properties(
+    ${MAJORDOMO_SOURCES_C_FILES}
+    PROPERTIES
+    LANGUAGE CXX
+  )
+endif (MSVC)
 
 # .. declare library to be built ..
 add_library(
   ${MAJORDOMO_TARGET}
-  SHARED
+  STATIC
   ${MAJORDOMO_PUBLIC_HEADERS}
   ${MAJORDOMO_SOURCES}
+)
+generate_export_header(${MAJORDOMO_TARGET})
+target_include_directories(
+  ${MAJORDOMO_TARGET}
+  PUBLIC ${LIBZMQ_INCLUDE_DIRS} ${CZMQ_INCLUDE_DIRS} ${MAJORDOMO_REPOSITORY}/libmdp/include
+  INTERFACE ${LIBZMQ_INCLUDE_DIRS} ${CZMQ_INCLUDE_DIRS} ${MAJORDOMO_REPOSITORY}/libmdp/include
 )
 target_link_libraries(
   ${MAJORDOMO_TARGET}
@@ -51,7 +65,7 @@ install(
   ARCHIVE DESTINATION lib
 )
 install(
-  FILES ${MAJORDOMO_PUBLIC_HEADERS}
+  FILES ${MAJORDOMO_PUBLIC_HEADERS}  ${PROJECT_BINARY_DIR}/${MAJORDOMO_TARGET}_export.h
   DESTINATION include
 )
 
