@@ -5,6 +5,8 @@ if (APPLE)
   set(ZMQ_BUILD_FRAMEWORK OFF)
 endif (APPLE)
 
+enable_testing()
+
 project(zmq)
 
 add_subdirectory(libzmq)
