@@ -5,6 +5,7 @@ project(czmq CXX)
 # .. define some variables ..
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 include(header_configuration)
+include(GenerateExportHeader)
 
 set(CZMQ_REPOSITORY          "${CMAKE_CURRENT_SOURCE_DIR}/repo"   CACHE PATH   "Path where the czmq sources are to be downloaded")
 set(CZMQ_URL                 "https://github.com/zeromq/czmq.git" CACHE STRING "The URL the czmq sources are to be downloaded from")
@@ -17,6 +18,8 @@ if (NOT IS_DIRECTORY ${CZMQ_REPOSITORY})
 elseif (NOT IS_DIRECTORY ${CZMQ_REPOSITORY})
   execute_process(COMMAND git pull --git-dir ${CZMQ_REPOSITORY} origin master)
 endif (NOT IS_DIRECTORY ${CZMQ_REPOSITORY})
+
+add_compiler_export_flags()
 
 # .. collect source files ..
 file(
@@ -32,7 +35,7 @@ file(
   ${CZMQ_REPOSITORY}/src/*.c
 )
 if (MSVC)
-  # .. preven MS cl to enforce pre-C99 parsing by forcing to C++ ..
+  # .. prevent MS cl to enforce pre-C99 parsing by forcing to C++ ..
   set_source_files_properties(
     ${CZMQ_SOURCES_C_FILES}
     PROPERTIES
@@ -54,11 +57,12 @@ configure_platform_header(
 # .. declare library to be built ..
 add_library(
   ${CZMQ_TARGET}
-  SHARED
+  STATIC
   ${CZMQ_PUBLIC_HEADERS}
   ${CZMQ_SOURCES_HEADERS}
   ${CZMQ_SOURCES_C_FILES}
 )
+generate_export_header(${CZMQ_TARGET})
 target_include_directories(
   ${CZMQ_TARGET}
   PUBLIC ${LIBZMQ_INCLUDE_DIRS}
@@ -80,7 +84,7 @@ install(
   ARCHIVE DESTINATION lib
 )
 install(
-  FILES ${CZMQ_PUBLIC_HEADERS}
+  FILES ${CZMQ_PUBLIC_HEADERS} ${PROJECT_BINARY_DIR}/${CZMQ_TARGET}_export.h
   DESTINATION include
 )
 
