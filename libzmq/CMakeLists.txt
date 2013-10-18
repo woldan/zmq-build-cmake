@@ -22,6 +22,6 @@ file(
 add_subdirectory(${LIBZMQ_REPOSITORY})
 
 # .. export variables for other projects ..
-set(LIBZMQ_INCLUDE_DIRS "${LIBZMQ_REPOSITORY}/include"     PARENT_SCOPE)
-set(LIBZMQ_LIBRARY_DIRS "${CMAKE_CURRENT_BINARY_DIR}/repo" PARENT_SCOPE)
-set(LIBZMQ_LIBRARIES    ${ZEROMQ_LIBRARY}                  PARENT_SCOPE)
+set(LIBZMQ_INCLUDE_DIRS "${LIBZMQ_REPOSITORY}/include"     CACHE PATH   "Include paths to use libzmq library.")
+set(LIBZMQ_LIBRARY_DIRS "${CMAKE_CURRENT_BINARY_DIR}/repo" CACHE PATH   "Library paths to use libzmq library.")
+set(LIBZMQ_LIBRARIES    ${ZEROMQ_LIBRARY}                  CACHE STRING "Library modules to use libzmq library.")

@@ -90,7 +90,6 @@ install(
 
 
 # .. propagate variables ..
-set(CZMQ_INCLUDE_DIRS ${CZMQ_REPOSITORY}/include  PARENT_SCOPE)
-set(CZMQ_LIBRARY_DIRS ${CMAKE_CURRENT_BINARY_DIR} PARENT_SCOPE)
-set(CZMQ_LIBRARIES    ${CZMQ_TARGET}              PARENT_SCOPE)
-
+set(CZMQ_INCLUDE_DIRS ${CZMQ_REPOSITORY}/include  CACHE PATH   "Include paths to use cmzq library.")
+set(CZMQ_LIBRARY_DIRS ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH   "Library paths to use cmzq library.")
+set(CZMQ_LIBRARIES    ${CZMQ_TARGET}              CACHE STRING "Library modules to use cmzq library.")
