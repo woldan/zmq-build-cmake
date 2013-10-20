@@ -93,6 +93,8 @@ target_link_libraries(
   ${CZMQ_LIBRARIES}
 )
 
+set_property(TARGET ${MAJORDOMO_TARGET} PROPERTY FOLDER majordomo)
+
 # .. propagate variables ..
 set(MAJORDOMO_INCLUDE_DIRS ${MAJORDOMO_REPOSITORY}/libmdp/include  CACHE PATH   "Include paths to use majordomo library.")
 set(MAJORDOMO_LIBRARY_DIRS ${CMAKE_CURRENT_BINARY_DIR}             CACHE PATH   "Library paths to use majordomo library.")
@@ -175,7 +177,9 @@ target_link_libraries(
 )
 
 install(
-  TARGETS ${MAJORDOMO_TARGET}
+  TARGETS ${MAJORDOMO_TARGET} ${MAJORDOMO_BROKER_TARGET}
+  ${MAJORDOMO_TEST_CLIENT_TARGET} ${MAJORDOMO_TEST_WORKER_TARGET}
+  ${MAJORDOMO_EXAMPLE_ENGINE_TARGET} ${MAJORDOMO_EXAMPLE_TRADER_TARGET}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
@@ -185,4 +189,9 @@ install(
   DESTINATION include
 )
 
+set_property(TARGET ${MAJORDOMO_BROKER_TARGET} PROPERTY FOLDER majordomo)
+set_property(TARGET ${MAJORDOMO_TEST_CLIENT_TARGET} PROPERTY FOLDER majordomo/examples)
+set_property(TARGET ${MAJORDOMO_TEST_WORKER_TARGET} PROPERTY FOLDER majordomo/examples)
+set_property(TARGET ${MAJORDOMO_EXAMPLE_ENGINE_TARGET} PROPERTY FOLDER majordomo/examples)
+set_property(TARGET ${MAJORDOMO_EXAMPLE_TRADER_TARGET} PROPERTY FOLDER majordomo/examples)
 

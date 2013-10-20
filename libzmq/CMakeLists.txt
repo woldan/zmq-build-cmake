@@ -21,6 +21,8 @@ file(
 # .. recurse into working copy as it provides its own CMakeLists.txt ..
 add_subdirectory(${LIBZMQ_REPOSITORY})
 
+set_property(TARGET ${ZEROMQ_LIBRARY} PROPERTY FOLDER libzmq)
+
 # .. export variables for other projects ..
 set(LIBZMQ_INCLUDE_DIRS "${LIBZMQ_REPOSITORY}/include"     CACHE PATH   "Include paths to use libzmq library.")
 set(LIBZMQ_LIBRARY_DIRS "${CMAKE_CURRENT_BINARY_DIR}/repo" CACHE PATH   "Library paths to use libzmq library.")

@@ -88,6 +88,8 @@ install(
   DESTINATION include
 )
 
+set_property(TARGET ${CZMQ_TARGET} PROPERTY FOLDER czmq)
+set_property(TARGET ${CZMQ_SELFTEST_TARGET} PROPERTY FOLDER tests)
 
 # .. propagate variables ..
 set(CZMQ_INCLUDE_DIRS ${CZMQ_REPOSITORY}/include  CACHE PATH   "Include paths to use cmzq library.")
